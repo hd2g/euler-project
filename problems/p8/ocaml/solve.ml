@@ -26,23 +26,24 @@ module List = struct
   include List
 end
 
-let max ns =
-  let rec loop n = function
-    | [] -> n
-    | x :: xs ->
-        let n' = if n < x then x else n in
-        loop n' xs
-  in loop 0. ns
+let max a b = if a < b then b else a
+
+let chars_of_string s =
+  s
+  |> String.to_seq
+  |> List.of_seq
+  |> List.map (String.make 1)
+
+let string_of_chars cs =
+  cs
+  |> List.map (fun s -> s.[0])
+  |> List.to_seq
+  |> String.of_seq
 
 let rec solve ss digit =
   if String.length ss < digit then []
   else
-    let ss' =
-      ss
-      |> String.to_seq
-      |> List.of_seq
-      |> List.map (String.make 1)
-    in
+    let ss' = chars_of_string ss in
     let calced =
       ss'
       |> List.take digit
@@ -52,11 +53,9 @@ let rec solve ss digit =
     let tl = 
       ss'
       |> List.drop 1
-      |> List.map (fun s -> s.[0])
-      |> List.to_seq
-      |> String.of_seq
+      |> string_of_chars
     in
     calced :: solve tl digit
 
-let () = assert ((solve dat 4 |> max) = 5832.)
-(* let () = assert ((solve dat 13 |> max) = 2091059712) *)
+let () = assert ((solve dat 4 |> List.fold_left max 0.) = 5832.)
+let () = assert ((solve dat 13 |> List.fold_left max 0.) = 23514624000.)
