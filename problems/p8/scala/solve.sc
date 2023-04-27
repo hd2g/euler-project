@@ -1,10 +1,12 @@
 import scala.io.Source
 
-val dat: String = Source.fromFile("../dat").getLines.mkString("")
+val dat: List[String] = Source.fromFile("../dat").getLines.toList
 
-def solve(s: String, digit: Int): List[Long] =
-  if (s.size < digit) Nil
-  else s.take(digit).map(_.asDigit.toLong).product :: solve(s.drop(1), digit)
+def solveHelper(line: String, digit: Int): List[Long] =
+  if (line.size < digit) Nil
+  else line.take(digit).map(_.asDigit.toLong).product :: solveHelper(line.drop(1), digit)
+
+def solve(lines: List[String], digit: Int): List[Long] = lines.foldLeft(List[Long]())((acc, line) => acc ++ solveHelper(line, digit))
 
 assert(solve(dat, 4).max == 5832L)
-assert(solve(dat, 13).max == 23514624000L)
+assert(solve(dat, 13).max == 5377010688L)
