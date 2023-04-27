@@ -11,7 +11,7 @@ let read_lines pathname =
   in loop ()
 
 let () = print_string "reading dat..."
-let dat = read_lines "../dat" |> String.concat ""
+let dat = read_lines "../dat"
 let () = print_endline "done"
 
 module List = struct
@@ -40,7 +40,7 @@ let string_of_chars cs =
   |> List.to_seq
   |> String.of_seq
 
-let rec solve ss digit =
+let rec solve' (ss : string) (digit : int) : float list =
   if String.length ss < digit then []
   else
     let ss' = chars_of_string ss in
@@ -55,7 +55,13 @@ let rec solve ss digit =
       |> List.drop 1
       |> string_of_chars
     in
-    calced :: solve tl digit
+    calced :: solve' tl digit
+
+let solve (lines : string list) (digit : int) : float list =
+  List.fold_left
+    (fun (acc : float list) (line : string) -> List.append acc (solve' line digit))
+    []
+    lines
 
 let () = assert ((solve dat 4 |> List.fold_left max 0.) = 5832.)
-let () = assert ((solve dat 13 |> List.fold_left max 0.) = 23514624000.)
+let () = assert ((solve dat 13 |> List.fold_left max 0.) = 5377010688.)
